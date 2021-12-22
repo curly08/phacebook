@@ -1,0 +1,32 @@
+<h1>All Users</h1>
+
+<ul>
+  <% @users.each do |user| %>
+    <% next if user == current_user %>
+    <li>
+      <%= user.email %>
+
+      <% if current_user.active_friends.include?(user) %>
+        <p>Already Friends</p>
+        <%= simple_form_for user, url: friendship_path(current_user.friendships.find_by_friend_id(user.id)), method: :delete do |f| %>
+          <%= f.submit 'Unfriend', class: 'button is-danger' %>
+        <% end %>
+      <% elsif current_user.pending_friends.include?(user) %>
+        <p>Waiting for their response...</p>
+        <%= simple_form_for user, url: friendship_path(current_user.friendships.find_by_friend_id(user.id)), method: :delete do |f| %>
+          <%= f.submit 'Cancel Friend Request', class: 'button is-danger' %>
+        <% end %>
+      <% elsif user.pending_friends.include?(current_user) %>
+        <%= simple_form_for user, url: friendships_path, method: :post do |f| %>
+          <%= f.hidden_field :friend_id, value: user.id %>
+          <%= f.submit 'Accept Friend Request', class: 'button is-info' %>
+        <% end %>
+      <% else %>
+        <%= simple_form_for user, url: friendships_path, method: :post do |f| %>
+          <%= f.hidden_field :friend_id, value: user.id %>
+          <%= f.submit 'Send Friend Request', class: 'button is-link' %>
+        <% end %>
+      <% end %>
+    </li>
+  <% end %>
+</ul>
