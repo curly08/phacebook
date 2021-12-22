@@ -14,6 +14,13 @@ ActiveStorage.start()
 
 document.addEventListener('turbolinks:load', () => {
 
+  // dropdown menu click events
+  var dropdown = document.querySelector('.dropdown');
+  dropdown.addEventListener('click', function(event) {
+    event.stopPropagation();
+    dropdown.classList.toggle('is-active');
+  });
+
   // Get all "navbar-burger" elements
   const $navbarBurgers = Array.prototype.slice.call(document.querySelectorAll('.navbar-burger'), 0);
 
@@ -35,5 +42,4 @@ document.addEventListener('turbolinks:load', () => {
       });
     });
   }
-
 });
