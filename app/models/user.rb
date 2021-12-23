@@ -12,6 +12,7 @@ class User < ApplicationRecord
   has_many :posts, dependent: :destroy
   has_many :likes, dependent: :destroy
   has_many :liked_posts, through: :likes, source: 'post'
+  has_many :comments, dependent: :destroy
 
   def active_friends
     friends.select { |friend| friend.friends.include?(self) }
