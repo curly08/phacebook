@@ -1,6 +1,20 @@
 <div class="content">
   <h1><%= @post.user.email %></h1>
   <p><%= @post.body %></p>
+
+  <div class="buttons">
+    <% if current_user.liked_posts.include?(@post) %>
+      <%= simple_form_for :unlike, url: like_path(current_user.likes.find_by_post_id(@post.id)), method: :delete do |f| %>
+        <%= f.submit 'Unlike', class: 'button is-link is-outlined' %>
+      <% end %>
+    <% else %>
+      <%= simple_form_for :like, url: likes_path, method: :post do |f| %>
+        <%= f.hidden_field :post_id, value: @post.id %>
+        <%= f.submit 'Like', class: 'button is-link' %>
+      <% end %>
+    <% end %>
+    <p class="title is-4 has-text-link"><%= @post.likes.count %></p>
+  </div>
   
   <div class="buttons">
     <% if current_user == @post.user %>
