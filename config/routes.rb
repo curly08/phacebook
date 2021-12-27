@@ -11,6 +11,7 @@ Rails.application.routes.draw do
   devise_for :users
   resources :posts do
     resources :comments, except: %i[index show]
+    get '/comments', to: redirect('/posts/%{post_id}')
   end
   resources :users, only: :index
   resources :friendships, only: %i[create destroy]
