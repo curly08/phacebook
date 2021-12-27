@@ -2,26 +2,27 @@
   <h1>Posts</h1>
 
   <% @posts.includes(:user).each do |post| %>
-      <h2><%= post.user.email %></h2>
-      <p><%= post.body %></p>
-      
-      <div class="buttons">
-        <% if current_user.liked_posts.include?(post) %>
-          <%= simple_form_for :unlike, url: like_path(current_user.likes.find_by_post_id(post.id)), method: :delete do |f| %>
-            <%= f.submit 'Unlike', class: 'button is-link is-outlined' %>
-          <% end %>
-        <% else %>
-          <%= simple_form_for :like, url: likes_path, method: :post do |f| %>
-            <%= f.hidden_field :post_id, value: post.id %>
-            <%= f.submit 'Like', class: 'button is-link' %>
-          <% end %>
+    <% next unless current_user.active_friends.include?(post.user) || current_user.posts.include?(post) %>
+    <h2><%= post.user.email %></h2>
+    <p><%= post.body %></p>
+    
+    <div class="buttons">
+      <% if current_user.liked_posts.include?(post) %>
+        <%= simple_form_for :unlike, url: like_path(current_user.likes.find_by_post_id(post.id)), method: :delete do |f| %>
+          <%= f.submit 'Unlike', class: 'button is-link is-outlined' %>
         <% end %>
-        <p class="title is-4 has-text-link"><%= post.likes.count %></p>
-      </div>
-
-      <%= link_to 'Show', post %>
-      <% if current_user == post.user %>
-      <%= link_to 'Edit', edit_post_path(post) %>
+      <% else %>
+        <%= simple_form_for :like, url: likes_path, method: :post do |f| %>
+          <%= f.hidden_field :post_id, value: post.id %>
+          <%= f.submit 'Like', class: 'button is-link' %>
+        <% end %>
       <% end %>
+      <p class="title is-4 has-text-link"><%= post.likes.count %></p>
+    </div>
+
+    <%= link_to 'Show', post %>
+    <% if current_user == post.user %>
+    <%= link_to 'Edit', edit_post_path(post) %>
+    <% end %>
   <% end %>
 </div>
