@@ -19,6 +19,12 @@
   <% @post.comments.includes(:user).each do |comment| %>
     <strong><%= comment.user.email %></strong>
     <p><%= comment.body %></p>
+    <% if current_user == comment.user %>
+    <div class="buttons">
+      <%= link_to 'Edit Comment', edit_post_comment_path(@post, comment), class: 'button is-info' %>
+      <%= link_to 'Delete Comment', post_comment_path(@post, comment), method: :delete, data: { confirm: 'Are you sure?' }, class: 'button is-danger' %>
+    </div>
+    <% end %>
   <% end %>
 
   <%= simple_form_for @comment, url: post_comments_path(@post) do |f| %>
