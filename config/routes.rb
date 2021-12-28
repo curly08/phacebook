@@ -13,7 +13,7 @@ Rails.application.routes.draw do
     resources :comments, except: %i[index show]
     get '/comments', to: redirect('/posts/%{post_id}')
   end
-  resources :users, only: :index
+  resources :users, only: %i[index show]
   resources :friendships, only: %i[create destroy]
   resources :likes, only: %i[create destroy]
   # For details on the DSL available within this file, see https://guides.rubyonrails.org/routing.html
