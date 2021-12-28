@@ -1,18 +1,71 @@
 <div class="content">
-  <h1 class="title is-3"><%= current_user.name %></h1>
+  <h1 class="title is-3"><%= @user.name %></h1>
+  
   <figure class="image is-128x128">
     <%= image_tag @user.gravatar_url, class: 'is-rounded'%>
   </figure>
-  <strong>Bio:</strong>
-  <p><%= @user.bio %></p>
-  <strong>Birthday:</strong>
-  <p><%= @user.birthday %></p>
-  <strong>Email:</strong>
-  <p><%= @user.email %></p>
-  <strong>Favourite Colour:</strong>
-  <p><%= @user.color %></p>
-  <strong>Favourite Animal:</strong>
-  <p><%= @user.animal %></p>
-  <strong>Favourite Food:</strong>
-  <p><%= @user.food %></p>
+  
+  <% if current_user.active_friends.include?(@user) %>
+    <strong>Bio:</strong>
+    <p><%= @user.bio %></p>
+    <strong>Birthday:</strong>
+    <p><%= @user.birthday %></p>
+    <strong>Email:</strong>
+    <p><%= @user.email %></p>
+    <strong>Favourite Colour:</strong>
+    <p><%= @user.color %></p>
+    <strong>Favourite Animal:</strong>
+    <p><%= @user.animal %></p>
+    <strong>Favourite Food:</strong>
+    <p><%= @user.food %></p>
+
+    <% @user.posts.each do |post| %>
+      <div class="box">
+        <h2><%= post.user.name %></h2>
+        <p><%= post.body %></p>
+        <% if current_user.liked_posts.include?(post) %>
+          <%= simple_form_for :unlike, url: like_path(current_user.likes.find_by_post_id(post.id)), method: :delete do |f| %>
+            <%= button_tag type: 'submit', class: "is-info button" do %>
+              <span class="icon-text">
+                <span class="icon">
+                  <i class="fa fa-thumbs-up"></i>
+                </span>
+                <span><%= post.likes.count %></span>
+              </span>
+            <% end %>
+          <% end %>
+        <% else %>
+          <%= simple_form_for :like, url: likes_path, method: :post do |f| %>
+            <%= f.hidden_field :post_id, value: post.id %>
+            <%= button_tag type: 'submit', class: "is-info is-outlined button" do %>
+              <span class="icon-text">
+                <span class="icon">
+                  <i class="fa fa-thumbs-up"></i>
+                </span>
+                <span><%= post.likes.count %></span>
+              </span>
+            <% end %>
+          <% end %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= simple_form_for @user, url: friendship_path(current_user.friendships.find_by_friend_id(@user.id)), method: :delete do |f| %>
+      <%= f.submit 'Unfriend', class: 'button is-danger' %>
+    <% end %>
+  <% elsif current_user.pending_friends.include?(@user) %>
+    <%= simple_form_for @user, url: friendship_path(current_user.friendships.find_by_friend_id(@user.id)), method: :delete do |f| %>
+      <%= f.submit 'Cancel Pending Friend Request', class: 'button is-danger' %>
+    <% end %>
+  <% elsif @user.pending_friends.include?(current_user) %>
+    <%= simple_form_for @user, url: friendships_path, method: :post do |f| %>
+      <%= f.hidden_field :friend_id, value: @user.id %>
+      <%= f.submit 'Accept Friend Request', class: 'button is-info' %>
+    <% end %>
+  <% else %>
+    <%= simple_form_for @user, url: friendships_path, method: :post do |f| %>
+      <%= f.hidden_field :friend_id, value: @user.id %>
+      <%= f.submit 'Send Friend Request', class: 'button is-link' %>
+    <% end %>
+  <% end %>
 </div>
