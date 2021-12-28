@@ -34,6 +34,9 @@ gem 'bulma-rails'
 gem 'devise'
 gem 'gravtastic'
 gem "font-awesome-rails"
+gem 'omniauth-facebook'
+gem 'omniauth-rails_csrf_protection'
+gem 'figaro'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console

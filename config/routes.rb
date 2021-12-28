@@ -8,7 +8,7 @@ Rails.application.routes.draw do
       root 'devise/sessions#new', as: :unauthenticated_root
     end
   end
-  devise_for :users
+  devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
   resources :posts do
     resources :comments, except: %i[index show]
     get '/comments', to: redirect('/posts/%{post_id}')
