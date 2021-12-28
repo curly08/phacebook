@@ -6,7 +6,7 @@ class FriendshipsController < ApplicationController
 
     respond_to do |format|
       if @friendship.save
-        format.html { redirect_to users_url, notice: "Friendship was successfully created." }
+        format.html { redirect_to request.referer, notice: "Friendship was successfully created." }
         format.json { render :json, status: :created }
       else
         format.html { redirect_to users_url, status: :unprocessable_entity, notice: "Friendship was unsuccessfully created." }
@@ -20,7 +20,7 @@ class FriendshipsController < ApplicationController
     @friendship.destroy
 
     respond_to do |format|
-      format.html { redirect_to users_url, notice: "Friendship was successfully destroyed." }
+      format.html { redirect_to request.referer, notice: "Friendship was successfully destroyed." }
       format.json { head :no_content }
     end
   end
