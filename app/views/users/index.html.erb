@@ -1,29 +1,32 @@
-<h1 class='title'>All Users</h1>
-
-<% @users.each do |user| %>
-  <div class="block">
+<div class="content">
+  <h1 class='title'>All Users</h1>
+  
+  <% @users.each do |user| %>
     <% next if user == current_user %>
-      <h2 class="title is-5"><%= user.email %></h2>
+    
+    <div class="block">
+      <h2 class="title is-5"><%= link_to user.name, user_path(user) %></h2>
       <figure class="image is-128x128"><%= image_tag user.gravatar_url, class: 'is-rounded' %></figure>
-    <% if current_user.active_friends.include?(user) %>
-      <%= simple_form_for user, url: friendship_path(current_user.friendships.find_by_friend_id(user.id)), method: :delete do |f| %>
-        <%= f.submit 'Unfriend', class: 'button is-danger' %>
+      
+      <% if current_user.active_friends.include?(user) %>
+        <%= simple_form_for user, url: friendship_path(current_user.friendships.find_by_friend_id(user.id)), method: :delete do |f| %>
+          <%= f.submit 'Unfriend', class: 'button is-danger' %>
+        <% end %>
+      <% elsif current_user.pending_friends.include?(user) %>
+        <%= simple_form_for user, url: friendship_path(current_user.friendships.find_by_friend_id(user.id)), method: :delete do |f| %>
+          <%= f.submit 'Cancel Pending Friend Request', class: 'button is-danger' %>
+        <% end %>
+      <% elsif user.pending_friends.include?(current_user) %>
+        <%= simple_form_for user, url: friendships_path, method: :post do |f| %>
+          <%= f.hidden_field :friend_id, value: user.id %>
+          <%= f.submit 'Accept Friend Request', class: 'button is-info' %>
+        <% end %>
+      <% else %>
+        <%= simple_form_for user, url: friendships_path, method: :post do |f| %>
+          <%= f.hidden_field :friend_id, value: user.id %>
+          <%= f.submit 'Send Friend Request', class: 'button is-link' %>
+        <% end %>
       <% end %>
-    <% elsif current_user.pending_friends.include?(user) %>
-      <p>Waiting for their response...</p>
-      <%= simple_form_for user, url: friendship_path(current_user.friendships.find_by_friend_id(user.id)), method: :delete do |f| %>
-        <%= f.submit 'Cancel Friend Request', class: 'button is-danger' %>
-      <% end %>
-    <% elsif user.pending_friends.include?(current_user) %>
-      <%= simple_form_for user, url: friendships_path, method: :post do |f| %>
-        <%= f.hidden_field :friend_id, value: user.id %>
-        <%= f.submit 'Accept Friend Request', class: 'button is-info' %>
-      <% end %>
-    <% else %>
-      <%= simple_form_for user, url: friendships_path, method: :post do |f| %>
-        <%= f.hidden_field :friend_id, value: user.id %>
-        <%= f.submit 'Send Friend Request', class: 'button is-link' %>
-      <% end %>
-    <% end %>
-  </div>
-<% end %>
+    </div>
+  <% end %>
+</div>

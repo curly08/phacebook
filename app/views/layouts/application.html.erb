@@ -10,7 +10,7 @@
     <%= javascript_pack_tag 'application', 'data-turbolinks-track': 'reload' %>
   </head>
 
-  <body>
+  <body class="Site">
     <% if notice %>
       <p class="alert alert-success"><%= notice %></p>
     <% end %>
@@ -36,35 +36,31 @@
         <div class="navbar-start">
           <% if user_signed_in? %>
           <div class="navbar-item">
-            <div class="buttons">
-              <%= link_to 'Create Post', new_post_path, class: "button is-primary" %>
-              <%= link_to 'Add Friend', users_path, class: "button is-primary" %>
-              <div class="dropdown">
-                <div class="dropdown-trigger">
-                  <button class='button is-primary' aria-haspopup="true" aria-controls="dropdown-menu">
-                    <span>Friend Requests</span>
-                  </button>
-                </div>
-                <div class="dropdown-menu" id="dropdown-menu" role="menu">
-                  <div class="dropdown-content">
-                    <% current_user.received_friendships.reject { |fr| fr.mutual? }.each_with_index do |fr, i| %>
-                      <% unless i == 0 %><hr class="dropdown-divider"><% end %>
-                      <%= link_to "#{User.find(fr.user_id).email} wants to be your friend!", users_path, class: "dropdown-item" %>
-                    <% end %>
-                  </div>
-                </div>
-              </div>
+            <%= link_to 'Create Post', new_post_path, class: "button is-primary" %>
+          </div>
+          
+          <div class="navbar-item">
+            <%= link_to 'Add Friend', users_path, class: "button is-primary" %>
+          </div>
+
+          <div class="navbar-item has-dropdown is-hoverable">
+            <a class="navbar-link">Friend Requests</a>
+
+            <div class="navbar-dropdown">
+              <% current_user.received_friendships.reject { |fr| fr.mutual? }.each_with_index do |fr, i| %>
+                <% unless i == 0 %><hr class="navbar-divider"><% end %>
+                <%= link_to "#{User.find(fr.user_id).name} wants to be your friend!", users_path, class: "navbar-item" %>
+              <% end %>
             </div>
           </div>
-          <% end %>
+        <% end %>
         </div>
 
         <div class="navbar-end">
           <div class="navbar-item">
-              <% if user_signed_in? %>
-                <figure class="image is-32x32"><%= link_to image_tag(current_user.gravatar_url, class: "is-rounded", style: "max-height: none;"), edit_user_registration_path %></figure>
-              <% end %>
-            </div>
+            <% if user_signed_in? %>
+              <figure class="image is-32x32"><%= link_to image_tag(current_user.gravatar_url, class: "is-rounded", style: "max-height: none;"), user_path(current_user) %></figure>
+            <% end %>
           </div>
 
           <div class="navbar-item">
@@ -81,10 +77,24 @@
       </div>
     </nav>
 
-    <div class="columns is-mobile is-centered">
-      <div class="content column is-9">
-        <%= yield %>
+    <main class="Site-content">
+      <div class="columns is-mobile is-centered">
+        <div class="column is-9">
+          <%= yield %>
+        </div>
       </div>
-    </div>
+    </main>
+
+    <footer class="footer py-5 is-flex-shrink-0">
+      <div class="content has-text-centered">        
+        <a href="https://github.com/curly08">
+          <figure class="image is-32x32 is-inline-block">
+            <%= image_tag '25231.png', id: "github-logo", alt: "Github logo" %>
+          </figure>
+        </a>
+        
+        <p><strong>phacebook</strong> by Matthew Noakes</p>
+      </div>
+    </footer>
   </body>
 </html>
