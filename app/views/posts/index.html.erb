@@ -4,7 +4,8 @@
   <% @posts.includes(:user).each do |post| %>
     <% next unless current_user.active_friends.include?(post.user) || current_user.posts.include?(post) %>
       <div class="box">
-      <h2><%= post.user.name %></h2>
+      <h2 class="title"><%= post.user.name %></h2>
+      <h3 class="subtitle is-7"><%= post.created_at.strftime('%B %d, %Y') %></h3>
       <p><%= post.body %></p>
       <% if current_user.liked_posts.include?(post) %>
         <%= simple_form_for :unlike, url: like_path(current_user.likes.find_by_post_id(post.id)), method: :delete do |f| %>
@@ -30,6 +31,7 @@
           <% end %>
         <% end %>
       <% end %>
+      <%= link_to 'View Comments', post %>
     </div>
   <% end %>
 </div>
