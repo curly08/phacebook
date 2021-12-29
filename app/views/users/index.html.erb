@@ -4,10 +4,13 @@
   <% @users.each do |user| %>
     <% next if user == current_user %>
     
-    <div class="block">
+    <div class="box">
       <h2 class="title is-5"><%= link_to user.name, user_path(user) %></h2>
-      <figure class="image is-128x128"><%= image_tag user.gravatar_url, class: 'is-rounded' %></figure>
       
+      <% if user.photo.attached? %>
+      <figure class="image is-128x128"><%= image_tag url_for(user.photo), class: 'is-rounded' %></figure>
+      <% end %>
+
       <% if current_user.active_friends.include?(user) %>
         <%= simple_form_for user, url: friendship_path(current_user.friendships.find_by_friend_id(user.id)), method: :delete do |f| %>
           <%= f.submit 'Unfriend', class: 'button is-danger' %>

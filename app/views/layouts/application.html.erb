@@ -51,8 +51,8 @@
 
         <div class="navbar-end">
           <div class="navbar-item">
-            <% if user_signed_in? %>
-              <figure class="image is-32x32"><%= link_to image_tag(current_user.gravatar_url, class: "is-rounded", style: "max-height: none;"), user_path(current_user) %></figure>
+            <% if user_signed_in? && current_user.photo.attached? %>
+              <figure class="image is-32x32"><%= link_to image_tag(url_for(current_user.photo), id: "navbar-picture", class: "is-rounded", style: "max-height: 32px;"), user_path(current_user) %></figure>
             <% end %>
           </div>
 

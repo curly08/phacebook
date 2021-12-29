@@ -16,6 +16,16 @@
 
     <div class="field">
       <div class="control">
+        <%= f.input :photo, as: :file,
+                    input_html: { class: 'input' },
+                    label: 'Profile Picture',
+                    label_html: { class: 'label' },
+                    wrapper: false %>
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="control">
         <%= f.input :birthday, as: :date, html5: true,
                     required: false,
                     input_html: { type: 'date', class: 'input' },
