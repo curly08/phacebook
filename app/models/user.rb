@@ -19,6 +19,21 @@ class User < ApplicationRecord
   has_many :comments, dependent: :destroy
   has_one_attached :photo, dependent: :destroy
 
+  validate :acceptable_photo
+
+  def acceptable_photo
+    return unless photo.attached?
+
+    unless photo.byte_size <= 1.megabyte
+      errors.add(:photo, "is too big")
+    end
+
+    acceptable_types = ["image/jpeg", "image/png", "image/webp"]
+    unless acceptable_types.include?(photo.content_type)
+      errors.add(:photo, "must be a JPEG, PNG, or WEBP")
+    end
+  end
+
   def active_friends
     friends.select { |friend| friend.friends.include?(self) }
   end
