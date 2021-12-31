@@ -1,5 +1,5 @@
 class PostsController < ApplicationController
-  before_action :set_post, only: %i[show edit update destroy]
+  before_action :set_post, only: %i[show edit update destroy delete_photo_attachment]
   before_action :authenticate_user!
 
   # GET /posts or /posts.json
@@ -57,6 +57,12 @@ class PostsController < ApplicationController
       format.html { redirect_to posts_url, notice: "Post was successfully destroyed." }
       format.json { head :no_content }
     end
+  end
+
+  def delete_photo_attachment
+    @photo = ActiveStorage::Attachment.find(params[:photo_id])
+    @photo.purge
+    redirect_to @post
   end
 
   private
