@@ -1,75 +1,90 @@
-<div class="content">
-  <h1 class="title is-3"><%= @user.name %></h1>
-  
-  <% if @user.photo.attached? %>
-    <div class="block"><img id="profile-picture" src="<%= url_for(@user.photo) %>"></div>
+<section class="section">
+  <%= link_to 'javascript:history.back()', class: 'mb-6 button is-white' do %>
+    <span class="icon-text">
+      <span class="icon">
+        <i class="fa fa-arrow-left"></i>
+      </span>
+    </span>
   <% end %>
   
-  <% if current_user.active_friends.include?(@user) || current_user == @user %>
-    <strong>Bio:</strong>
-    <p><%= @user.bio %></p>
-    <strong>Birthday:</strong>
-    <p><%= @user.birthday %></p>
-    <strong>Email:</strong>
-    <p><%= @user.email %></p>
-    <strong>Favourite Colour:</strong>
-    <p><%= @user.color %></p>
-    <strong>Favourite Animal:</strong>
-    <p><%= @user.animal %></p>
-    <strong>Favourite Food:</strong>
-    <p><%= @user.food %></p>
+  <div class="content has-text-centered">
+    <h1 class="title is-1"><%= @user.name %></h1>
+    
+    <figure class="image is-256x256">
+    <% if @user.photo.attached? %>
+      <img id="profile-picture" src="<%= url_for(@user.photo) %>">
+    <% else %>
+      <img src="/assets/default-non-user-no-photo-1.jpg" id="profile-picture">
+    <% end %>
+    </figure>
+    
+    <% if current_user.active_friends.include?(@user) || current_user == @user %>
+          <strong>Bio</strong>
+          <p><%= @user.bio %></p>
+          <strong>Birthday</strong>
+          <p><%= @user.birthday %></p>
+          <strong>Email</strong>
+          <p><%= @user.email %></p>
+          <strong>Favourite Colour</strong>
+          <p><%= @user.color %></p>
+          <strong>Favourite Animal</strong>
+          <p><%= @user.animal %></p>
+          <strong>Favourite Food</strong>
+          <p><%= @user.food %></p>
+          <br>
+    <% end %>
 
-    <% @user.posts.each do |post| %>
-      <div class="box">
-        <h2><%= post.user.name %></h2>
-        <p><%= post.body %></p>
-        <% if current_user.liked_posts.include?(post) %>
-          <%= simple_form_for :unlike, url: like_path(current_user.likes.find_by_post_id(post.id)), method: :delete do |f| %>
-            <%= button_tag type: 'submit', class: "is-info button" do %>
-              <span class="icon-text">
-                <span class="icon">
-                  <i class="fa fa-thumbs-up"></i>
-                </span>
-                <span><%= post.likes.count %></span>
-              </span>
-            <% end %>
-          <% end %>
-        <% else %>
-          <%= simple_form_for :like, url: likes_path, method: :post do |f| %>
-            <%= f.hidden_field :post_id, value: post.id %>
-            <%= button_tag type: 'submit', class: "is-info is-outlined button" do %>
-              <span class="icon-text">
-                <span class="icon">
-                  <i class="fa fa-thumbs-up"></i>
-                </span>
-                <span><%= post.likes.count %></span>
-              </span>
-            <% end %>
-          <% end %>
-        <% end %>
+    <% if current_user == @user %>
+      <%= link_to 'Edit Profile', edit_user_path(current_user), class: 'button is-info is-outlined' %>
+    <% elsif current_user.active_friends.include?(@user) %>
+      <%= simple_form_for @user, url: friendship_path(current_user.friendships.find_by_friend_id(@user.id)), method: :delete do |f| %>
+        <%= f.submit 'Unfriend', class: 'button is-danger is-outlined' %>
+      <% end %>
+    <% elsif current_user.pending_friends.include?(@user) %>
+      <%= simple_form_for @user, url: friendship_path(current_user.friendships.find_by_friend_id(@user.id)), method: :delete do |f| %>
+        <%= f.submit 'Cancel Request', class: 'button is-danger is-outlined' %>
+      <% end %>
+    <% elsif @user.pending_friends.include?(current_user) %>
+      <%= simple_form_for @user, url: friendships_path, method: :post do |f| %>
+        <%= f.hidden_field :friend_id, value: @user.id %>
+        <%= f.submit 'Accept Friend', class: 'button is-info is-outlined' %>
+      <% end %>
+    <% else %>
+      <%= simple_form_for @user, url: friendships_path, method: :post do |f| %>
+        <%= f.hidden_field :friend_id, value: @user.id %>
+        <%= f.submit 'Add Friend', class: 'button is-info is-outlined' %>
+      <% end %>
+    <% end %>
+  </div>
+</section>
+
+<% if current_user.active_friends.include?(@user) || current_user == @user && !@user.posts.empty? %>
+<section class="section">
+  <h1 class="title is-2">Posts</h1>
+  <% @user.posts.each do |post| %>
+  <article class="media">
+    <figure class="media-left mx-4 mb-0">
+      <% if post.user.photo.attached? %>
+      <p class="image is-64x64">
+        <%= link_to image_tag(url_for(post.user.photo), class: "is-rounded"), user_path(post.user) %>
+      </p>
+      <% end %>
+    </figure>
+
+    <div class="media-content">
+      <div class="content">
+        <h2 class="title"><%= post.user.name %></h2>
+        <h3 class="subtitle is-6"><%= post.created_at.strftime('%B %d, %Y') %></h3>
+        <p><%= post.body.truncate(400) %></p>
+
+        <div class="buttons">
+          <%= render partial: "likes/likes_form", locals: {post: post} %>
+          
+          <%= link_to 'View Comments', post, class: 'button is-white' %>
+        </div>
       </div>
-    <% end %>
+    </div>
+  </article>
   <% end %>
-
-  <% if current_user == @user %>
-    <%= link_to 'Edit Profile', edit_user_path(current_user), class: 'button is-info' %>
-  <% elsif current_user.active_friends.include?(@user) %>
-    <%= simple_form_for @user, url: friendship_path(current_user.friendships.find_by_friend_id(@user.id)), method: :delete do |f| %>
-      <%= f.submit 'Unfriend', class: 'button is-danger' %>
-    <% end %>
-  <% elsif current_user.pending_friends.include?(@user) %>
-    <%= simple_form_for @user, url: friendship_path(current_user.friendships.find_by_friend_id(@user.id)), method: :delete do |f| %>
-      <%= f.submit 'Cancel Pending Friend Request', class: 'button is-danger' %>
-    <% end %>
-  <% elsif @user.pending_friends.include?(current_user) %>
-    <%= simple_form_for @user, url: friendships_path, method: :post do |f| %>
-      <%= f.hidden_field :friend_id, value: @user.id %>
-      <%= f.submit 'Accept Friend Request', class: 'button is-info' %>
-    <% end %>
-  <% else %>
-    <%= simple_form_for @user, url: friendships_path, method: :post do |f| %>
-      <%= f.hidden_field :friend_id, value: @user.id %>
-      <%= f.submit 'Send Friend Request', class: 'button is-link' %>
-    <% end %>
-  <% end %>
-</div>
+</section>
+<% end %>

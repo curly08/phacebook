@@ -1,84 +1,88 @@
-<div class="content">
+<section class="section">
   <h1 class="title">Edit Profile</h1>
-
+  
   <%= simple_form_for @user do |f| %>
   <%= f.error_notification %>
-
-  <div class="form-inputs">
-    <div class="field">
-      <div class="control">
-      <%= f.input :name, autofocus: true,
-                  input_html: { class: 'input' },
-                  label_html: { class: 'label' },
-                  wrapper: false %>
-      </div>
-    </div>
-
-    <div class="field">
-      <div class="control">
-        <%= f.input :photo, as: :file,
+    <div class="form-inputs">
+      <div class="field">
+        <div class="control">
+        <%= f.input :name, autofocus: true,
                     input_html: { class: 'input' },
-                    label: 'Profile Picture',
                     label_html: { class: 'label' },
                     wrapper: false %>
+        </div>
+      </div>
+      
+      <div class="field">
+        <div class="control">
+          <%= f.input :photo, as: :file,
+                      input_html: { class: 'input' },
+                      label: 'Profile Picture',
+                      label_html: { class: 'label' },
+                      wrapper: false %>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <%= f.input :birthday, as: :date, html5: true,
+                      required: false,
+                      input_html: { type: 'date', class: 'input' },
+                      label_html: { class: 'label' },
+                      wrapper: false %>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <%= f.input :bio,
+                      required: false,
+                      input_html: { class: 'textarea', cols: 65, rows: 5 },
+                      label_html: { class: 'label' },
+                      wrapper: false %>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <%= f.input :color,
+                      input_html: { class: 'input' },
+                      label: 'Favourite Colour',
+                      label_html: { class: 'label' },
+                      wrapper: false %>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <%= f.input :animal,
+                      input_html: { class: 'input' },
+                      label: 'Favourite Animal',
+                      label_html: { class: 'label' },
+                      wrapper: false %>
+        </div>
+      </div>
+
+      <div class="field">
+        <div class="control">
+          <%= f.input :food,
+                      input_html: { class: 'input' },
+                      label: 'Favourite Food',
+                      label_html: { class: 'label' },
+                      wrapper: false %>
+        </div>
       </div>
     </div>
 
-    <div class="field">
-      <div class="control">
-        <%= f.input :birthday, as: :date, html5: true,
-                    required: false,
-                    input_html: { type: 'date', class: 'input' },
-                    label_html: { class: 'label' },
-                    wrapper: false %>
+    <div class="form-actions">
+      <div class="field">
+        <div class="buttons">
+          <%= f.button :submit, "Update Profile", class: 'button is-info is-outlined' %>
+          <%= link_to 'Edit Login Settings', edit_user_registration_path(@user), class: "button is-link is-outlined" %>
+        </div>
       </div>
     </div>
-
-    <div class="field">
-      <div class="control">
-        <%= f.input :bio,
-                    required: false,
-                    input_html: { class: 'textarea' },
-                    label_html: { class: 'label' },
-                    wrapper: false %>
-      </div>
-    </div>
-
-    <div class="field">
-      <div class="control">
-        <%= f.input :color,
-                    input_html: { class: 'input' },
-                    label: 'Favourite Colour',
-                    label_html: { class: 'label' },
-                    wrapper: false %>
-      </div>
-    </div>
-
-    <div class="field">
-      <div class="control">
-        <%= f.input :animal,
-                    input_html: { class: 'input' },
-                    label: 'Favourite Animal',
-                    label_html: { class: 'label' },
-                    wrapper: false %>
-      </div>
-    </div>
-
-    <div class="field">
-      <div class="control">
-        <%= f.input :food,
-                    input_html: { class: 'input' },
-                    label: 'Favourite Food',
-                    label_html: { class: 'label' },
-                    wrapper: false %>
-      </div>
-    </div>
-  </div>
-
-  <div class="form-actions">
-    <div class="field">
-      <div class="control"><%= f.button :submit, "Update Profile", class: 'button is-primary' %></div>
-    </div>
-  </div>
   <% end %>
-</div>
+  
+  <div class="block"><%= link_to 'Cancel', @user, class: "button" %></div>
+</section>

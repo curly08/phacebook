@@ -1,26 +1,28 @@
-<h2>Resend confirmation instructions</h2>
-
-<%= simple_form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
-  <%= f.error_notification %>
-  <%= f.full_error :confirmation_token %>
-
-  <div class="form-inputs">
-    <div class="field">
-      <div class="control">
-        <%= f.input :email,
-                    required: true,
-                    autofocus: true,
-                    value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email),
-                    input_html: { class: 'input', autocomplete: "email" },
-                    label_html: { class: 'label' },
-                    wrapper: false %>
+<section class="section">
+  <h2 class="title">Resend confirmation instructions</h2>
+  
+  <%= simple_form_for(resource, as: resource_name, url: confirmation_path(resource_name), html: { method: :post }) do |f| %>
+    <%= f.error_notification %>
+    <%= f.full_error :confirmation_token %>
+  
+    <div class="form-inputs">
+      <div class="field">
+        <div class="control">
+          <%= f.input :email,
+                      required: true,
+                      autofocus: true,
+                      value: (resource.pending_reconfirmation? ? resource.unconfirmed_email : resource.email),
+                      input_html: { class: 'input', autocomplete: "email" },
+                      label_html: { class: 'label' },
+                      wrapper: false %>
+        </div>
       </div>
     </div>
-  </div>
-
-  <div class="form-actions">
-    <div class="field"><div class="control"><%= f.button :submit, "Resend confirmation instructions", class: 'button is-info' %></div></div>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+  
+    <div class="form-actions">
+      <div class="field"><div class="control"><%= f.button :submit, "Resend confirmation instructions", class: 'button is-info' %></div></div>
+    </div>
+  <% end %>
+  
+  <%= render "devise/shared/links" %>
+</section>

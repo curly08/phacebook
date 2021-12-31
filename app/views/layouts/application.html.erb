@@ -18,7 +18,7 @@
       <p class="alert alert-danger"><%= alert %></p>
     <% end %>
 
-    <nav class="navbar is-light" role="navigation" aria-label="main navigation">
+    <nav class="navbar is-white has-shadow" role="navigation" aria-label="main navigation">
       <div class="navbar-brand">
         <%= link_to 'phacebook', authenticated_root_path, class: "navbar-item is-size-3 px-3 py-0" %>
 
@@ -51,8 +51,14 @@
 
         <div class="navbar-end">
           <div class="navbar-item">
-            <% if user_signed_in? && current_user.photo.attached? %>
-              <figure class="image is-32x32"><%= link_to image_tag(url_for(current_user.photo), id: "navbar-picture", class: "is-rounded", style: "max-height: 32px;"), user_path(current_user) %></figure>
+            <% if user_signed_in? %>
+              <figure class="image is-32x32">
+              <% if current_user.photo.attached? %>
+                <%= link_to image_tag(url_for(current_user.photo), id: "navbar-picture", class: "is-rounded", style: "max-height: 32px;"), user_path(current_user) %>
+              <% else %>
+                <%= link_to image_tag('default-non-user-no-photo-1.jpg', id: "navbar-picture", class: "is-rounded", style: "max-height: 32px;"), user_path(current_user) %>
+              <% end %>
+              </figure>
             <% end %>
           </div>
 
@@ -62,7 +68,7 @@
                 <%= link_to 'Log Out', destroy_user_session_path, method: :delete, class: "button is-danger" %>
               <% else %>
                 <%= link_to 'Sign Up', new_user_registration_path, class: "button is-primary" %>
-                <%= link_to 'Log In', new_user_session_path, class: "button is-light" %>
+                <%= link_to 'Log In', new_user_session_path, class: "button is-info" %>
               <% end %>
             </div>
           </div>
@@ -70,21 +76,19 @@
       </div>
     </nav>
 
-    <main class="Site-content">
-      <div class="columns is-mobile is-centered">
-        <div class="column is-9">
-          <%= yield %>
-        </div>
-      </div>
+    <main class="Site-content container">
+      <%= yield %>
     </main>
 
     <footer class="footer py-5 is-flex-shrink-0">
-      <div class="content has-text-centered">        
-        <figure class="image is-32x32 is-inline-block m-0">
-          <%= link_to image_tag('25231.png', id: "github-logo", alt: "Github logo"), "https://github.com/curly08", id: 'github-logo-anchor' %>
-        </figure>
-        
-        <p><strong>phacebook</strong> by Matthew Noakes</p>
+      <div class="content has-text-centered">                
+        <p class="is-size-7">
+        <strong>phacebook</strong> by 
+        <%= link_to "https://github.com/curly08", class: 'has-text-dark' do %>
+            <%= image_tag('25231.png', id: "github-logo", alt: "Github logo") %>
+          Matthew Noakes
+        <% end %>
+        </p>
       </div>
     </footer>
   </body>

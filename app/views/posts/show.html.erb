@@ -1,73 +1,92 @@
-<div class="content">
-  <h1 class="title"><%= @post.user.name %></h1>
-  <h2 class="subtitle is-5"><%= @post.created_at.strftime('%B %d, %Y') %></h2>
-  <p><%= @post.body %></p>
-  <% if @post.photo.attached? %>
-    <div class="block"><img id="post-picture" src="<%= url_for(@post.photo) %>"></div>
+<section class="section">
+  <%= link_to 'javascript:history.back()', class: 'button is-white mb-6' do %>
+    <span class="icon-text">
+      <span class="icon">
+        <i class="fa fa-arrow-left"></i>
+      </span>
+    </span>
   <% end %>
 
-  <div class="buttons">
-    <% if current_user.liked_posts.include?(@post) %>
-      <%= simple_form_for :unlike, url: like_path(current_user.likes.find_by_post_id(@post.id)), method: :delete do |f| %>
-        <%= button_tag type: 'submit', class: "is-info button" do %>
-          <span class="icon-text">
-            <span class="icon">
-              <i class="fa fa-thumbs-up"></i>
-            </span>
-            <span><%= @post.likes.count %></span>
-          </span>
+  <article class="media">
+    <figure class="media-left mx-4 mb-0">
+      <p class="image is-64x64">
+        <% if @post.user.photo.attached? %>
+          <%= link_to image_tag(url_for(@post.user.photo), class: "is-rounded"), user_path(@post.user) %>
+        <% else %>
+          <%= link_to image_tag("default-non-user-no-photo-1.jpg", class: "is-rounded"), user_path(@post.user) %>
         <% end %>
-      <% end %>
-    <% else %>
-      <%= simple_form_for :like, url: likes_path, method: :post do |f| %>
-        <%= f.hidden_field :post_id, value: @post.id %>
-        <%= button_tag type: 'submit', class: "is-info is-outlined button" do %>
-          <span class="icon-text">
-            <span class="icon">
-              <i class="fa fa-thumbs-up"></i>
-            </span>
-            <span><%= @post.likes.count %></span>
-          </span>
+      </p>
+    </figure>
+
+    <div class="media-content">
+      <div class="content">
+        <h1 class="title"><%= link_to @post.user.name, user_path(@post.user), class: 'has-text-dark' %></h1>
+        <h2 class="subtitle is-6"><%= @post.created_at.strftime('%B %d, %Y') %></h2>
+        
+        <p><%= @post.body %></p>
+        <% if @post.photo.attached? %>
+          <div class="block"><img id="post-picture" src="<%= url_for(@post.photo) %>"></div>
         <% end %>
-      <% end %>
-    <% end %>
-  </div>
+
+        
+        <div class="buttons">
+          <%= render partial: "likes/likes_form", locals: {post: @post} %>
+          
+          <% if current_user == @post.user %>
+            <%= link_to 'Edit Post', edit_post_path(@post), class: 'button is-outlined is-info', style: "margin-left: auto;" %>
+            <%= link_to 'Delete Post', @post, method: :delete, data: { confirm: 'Are you sure?' }, class: 'button is-danger is-outlined left' %>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </article>
 
   <% @post.comments.includes(:user).each do |comment| %>
-    <strong><%= comment.user.name %></strong>
-    <p><%= comment.body %></p>
-    <% if current_user == comment.user %>
-    <div class="buttons">
-      <%= link_to 'Edit Comment', edit_post_comment_path(@post, comment), class: 'button is-info' %>
-      <%= link_to 'Delete Comment', post_comment_path(@post, comment), method: :delete, data: { confirm: 'Are you sure?' }, class: 'button is-danger' %>
-    </div>
-    <% end %>
+    <article class="media">
+      <figure class="media-left mx-4 mb-0">
+        <p class="image is-64x64">
+          <% if comment.user.photo.attached? %>
+            <%= link_to image_tag(url_for(comment.user.photo), class: "is-rounded"), user_path(comment.user) %>
+          <% else %>
+            <%= link_to image_tag("default-non-user-no-photo-1.jpg", class: "is-rounded"), user_path(comment.user) %>
+          <% end %>
+        </p>
+      </figure>
+
+      <div class="media-content">
+        <div class="content">
+          <p>
+            <strong><%= link_to comment.user.name, user_path(comment.user), class: 'has-text-dark' %></strong>
+            <small> · <%= time_ago_in_words(comment.created_at) %></small>
+            <br>
+            <%= comment.body %>
+            <br>
+            <% if current_user == comment.user %>
+              <small>
+                <%= link_to 'Edit', edit_post_comment_path(@post, comment), class: 'has-text-info' %>
+                ·
+                <%= link_to 'Delete', post_comment_path(@post, comment), class: 'has-text-danger', method: :delete, data: { confirm: 'Are you sure?' } %>
+               </small>
+            <% end %>
+          </p>
+        </div>
+      </div>
+    </article>
   <% end %>
 
-  <%= simple_form_for @comment, url: post_comments_path(@post) do |f| %>
-    <%= f.error_notification %>
-    <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+  <article class="media">
+    <figure class="media-left mx-4">
+      <p class="image is-64x64">
+        <% if current_user.photo.attached? %>
+          <%= image_tag(url_for(current_user.photo), class: "is-rounded") %>
+        <% else %>
+          <%= image_tag("default-non-user-no-photo-1.jpg", class: "is-rounded") %>
+        <% end %>
+      </p>
+    </figure>
 
-    <div class="form-inputs field">
-      <div class="control">
-        <%= f.input :body, input_html: { class: "textarea"}, wrapper: false, label_html: {class: "label"} %>
-      </div>
+    <div class="media-content">
+      <%= render partial: "comments/comment_form" %>
     </div>
-
-    <div class="form-actions field">
-      <div class="control">
-        <%= f.button :submit, class: "button is-info" %>
-      </div>
-    </div>
-  <% end %>
-  
-  <div class="buttons">
-    <% if current_user == @post.user %>
-    <%= link_to 'Edit Post', edit_post_path(@post), class: 'button is-info' %>
-    <% end %>
-    <%= link_to 'Back', posts_path, class: 'button is-light' %>
-    <% if current_user == @post.user %>
-    <%= link_to 'Delete Post', @post, method: :delete, data: { confirm: 'Are you sure?' }, class: 'button is-danger left' %>
-    <% end %>
-  </div>
-</div>
+  </article>
+</section>

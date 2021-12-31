@@ -1,35 +1,107 @@
-<div class="content">
-  <h1 class='title'>All Users</h1>
-  
-  <% @users.each do |user| %>
-    <% next if user == current_user %>
-    
-    <div class="box">
-      <h2 class="title is-5"><%= link_to user.name, user_path(user) %></h2>
-      
-      <% if user.photo.attached? %>
-      <figure class="image is-128x128"><%= image_tag url_for(user.photo), class: 'is-rounded' %></figure>
-      <% end %>
+<section class="section">
+  <%= link_to 'javascript:history.back()', class: 'mb-6 button is-white' do %>
+    <span class="icon-text">
+      <span class="icon">
+        <i class="fa fa-arrow-left"></i>
+      </span>
+    </span>
+  <% end %>
 
-      <% if current_user.active_friends.include?(user) %>
-        <%= simple_form_for user, url: friendship_path(current_user.friendships.find_by_friend_id(user.id)), method: :delete do |f| %>
-          <%= f.submit 'Unfriend', class: 'button is-danger' %>
+  <h1 class='title is-2 level-item'>All Users</h1>
+  
+  <div class="columns is-multiline">
+    <%# current friends %>
+    <div class="column is-one-quarter-desktop is-half-tablet has-text-centered">
+      <h2 class='title is-4 level-item'>Current Friends</h2>
+
+      <% current_user.active_friends.each do |friend| %>
+      <div class="box">
+        <h3 class="title is-5 mb-2"><%= link_to friend.name, user_path(friend), class: 'has-text-dark' %></h3>
+        
+        <figure class="image is-128x128 is-inline-block mb-2">
+          <% if friend.photo.attached? %>
+            <%= image_tag url_for(friend.photo), class: 'is-rounded' %>
+          <% else %>
+            <%= image_tag("default-non-user-no-photo-1.jpg", class: "is-rounded") %>
+          <% end %>
+        </figure>
+        
+        <%= simple_form_for friend, url: friendship_path(current_user.friendships.find_by_friend_id(friend.id)), method: :delete do |f| %>
+          <%= f.submit 'Unfriend', class: 'button is-danger is-outlined' %>
         <% end %>
-      <% elsif current_user.pending_friends.include?(user) %>
-        <%= simple_form_for user, url: friendship_path(current_user.friendships.find_by_friend_id(user.id)), method: :delete do |f| %>
-          <%= f.submit 'Cancel Pending Friend Request', class: 'button is-danger' %>
-        <% end %>
-      <% elsif user.pending_friends.include?(current_user) %>
-        <%= simple_form_for user, url: friendships_path, method: :post do |f| %>
-          <%= f.hidden_field :friend_id, value: user.id %>
-          <%= f.submit 'Accept Friend Request', class: 'button is-info' %>
-        <% end %>
-      <% else %>
-        <%= simple_form_for user, url: friendships_path, method: :post do |f| %>
-          <%= f.hidden_field :friend_id, value: user.id %>
-          <%= f.submit 'Send Friend Request', class: 'button is-link' %>
-        <% end %>
+      </div>
       <% end %>
     </div>
-  <% end %>
-</div>
+
+    <%# Incoming Friend requests %>
+    <div class="column is-one-quarter-desktop is-half-tablet has-text-centered">
+      <h2 class='title is-4 level-item'>Incoming Friend Requests</h2>
+
+      <% current_user.received_friends.reject { |friend| current_user.active_friends.include?(friend) }.each do |friend| %>
+      <div class="box">
+        <h3 class="title is-5 mb-2"><%= link_to friend.name, user_path(friend), class: 'has-text-dark' %></h3>
+        
+        <figure class="image is-128x128 is-inline-block mb-2">
+          <% if friend.photo.attached? %>
+            <%= image_tag url_for(friend.photo), class: 'is-rounded' %>
+          <% else %>
+            <%= image_tag("default-non-user-no-photo-1.jpg", class: "is-rounded") %>
+          <% end %>
+        </figure>
+
+        <%= simple_form_for friend, url: friendships_path, method: :post do |f| %>
+          <%= f.hidden_field :friend_id, value: friend.id %>
+          <%= f.submit 'Accept Friend', class: 'button is-info is-outlined' %>
+        <% end %>
+      </div>
+      <% end %>
+    </div>
+
+    <%# Pending friends %>
+    <div class="column is-one-quarter-desktop is-half-tablet has-text-centered">
+      <h2 class='title is-4 level-item'>Pending Friend Requests</h2>
+
+      <% current_user.pending_friends.each do |friend| %>
+      <div class="box">
+        <h3 class="title is-5 mb-2"><%= link_to friend.name, user_path(friend), class: 'has-text-dark' %></h3>
+        
+        <figure class="image is-128x128 is-inline-block mb-2">
+          <% if friend.photo.attached? %>
+            <%= image_tag url_for(friend.photo), class: 'is-rounded' %>
+          <% else %>
+            <%= image_tag("default-non-user-no-photo-1.jpg", class: "is-rounded") %>
+          <% end %>
+        </figure>
+
+        <%= simple_form_for friend, url: friendship_path(current_user.friendships.find_by_friend_id(friend.id)), method: :delete do |f| %>
+          <%= f.submit 'Cancel Request', class: 'button is-danger is-outlined' %>
+        <% end %>
+      </div>
+      <% end %>
+    </div>
+
+    <%# Other Users %>
+    <div class="column is-one-quarter-desktop is-half-tablet has-text-centered">
+      <h2 class='title is-4 level-item'>Other Users</h2>
+
+      <% @users.reject { |friend| current_user.active_friends.include?(friend) || current_user.pending_friends.include?(friend) || current_user.received_friends.include?(friend) || current_user == friend }.each do |user| %>
+      <div class="box">
+        <h3 class="title is-5 mb-2"><%= link_to user.name, user_path(user), class: 'has-text-dark' %></h3>
+        
+        <figure class="image is-128x128 is-inline-block mb-2">
+          <% if user.photo.attached? %>
+            <%= image_tag url_for(user.photo), class: 'is-rounded' %>
+          <% else %>
+            <%= image_tag("default-non-user-no-photo-1.jpg", class: "is-rounded") %>
+          <% end %>
+        </figure>
+
+        <%= simple_form_for user, url: friendships_path, method: :post do |f| %>
+          <%= f.hidden_field :friend_id, value: user.id %>
+          <%= f.submit 'Add Friend', class: 'button is-info is-outlined' %>
+        <% end %>
+      </div>
+      <% end %>
+    </div>
+  </div>
+</section>

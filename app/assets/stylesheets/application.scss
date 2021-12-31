@@ -14,6 +14,9 @@
  *= require_self
  */
 
+@import "font-awesome";
+@import "bulma";
+
 .Site {
   display: flex;
   min-height: 100vh;
@@ -24,8 +27,13 @@
   flex: 1;
 }
 
-#github-logo-anchor:hover {
+a:hover {
   background-color: transparent;
+}
+
+#github-logo {
+  width: 16px;
+  margin-bottom: -3px;
 }
 
 #profile-picture {
@@ -35,5 +43,11 @@
   border-radius: 50%;
 }
 
-@import "bulma";
-@import "font-awesome";
+.image img {
+  height: 100%;
+  object-fit: cover;
+}
+
+.media-content {
+  overflow-x: visible;
+}

@@ -1,47 +1,53 @@
-<h2>Sign up</h2>
-
-<%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
-  <%= f.error_notification %>
-
-  <div class="form-inputs">
-    <div class="field">
-      <div class="control">
-        <%= f.input :email,
-                    required: true,
-                    autofocus: true,
-                    input_html: { class: "input", autocomplete: "email" },
-                    label_html: { class: "label" },
-                    wrapper: false %>
+<section class="section">
+  <h2 class="title">Sign up</h2>
+  
+  <%= simple_form_for(resource, as: resource_name, url: registration_path(resource_name)) do |f| %>
+    <%= f.error_notification %>
+  
+    <div class="form-inputs">
+      <div class="field">
+        <div class="control">
+          <%= f.input :email,
+                      required: true,
+                      autofocus: true,
+                      input_html: { class: "input", autocomplete: "email" },
+                      label_html: { class: "label" },
+                      wrapper: false %>
+        </div>
+      </div>
+      <div class="field">
+        <div class="control">
+          <%= f.input :password,
+                      required: true,
+                      hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length),
+                      input_html: { class: "input", autocomplete: "new-password" },
+                      label_html: { class: "label" },
+                      wrapper: false %>
+        </div>
+      </div>
+      <div class="field">
+        <div class="control">
+          <%= f.input :password_confirmation,
+                      required: true,
+                      input_html: { class: "input", autocomplete: "new-password" },
+                      label_html: { class: "label" },
+                      wrapper: false %>
+        </div>
       </div>
     </div>
-    <div class="field">
-      <div class="control">
-        <%= f.input :password,
-                    required: true,
-                    hint: ("#{@minimum_password_length} characters minimum" if @minimum_password_length),
-                    input_html: { class: "input", autocomplete: "new-password" },
-                    label_html: { class: "label" },
-                    wrapper: false %>
+  
+    <div class="form-actions">
+      <div class="field">
+        <div class="control">
+          <%= f.button :submit, "Sign up", class: "button is-primary" %>
+        </div>
       </div>
     </div>
-    <div class="field">
-      <div class="control">
-        <%= f.input :password_confirmation,
-                    required: true,
-                    input_html: { class: "input", autocomplete: "new-password" },
-                    label_html: { class: "label" },
-                    wrapper: false %>
-      </div>
-    </div>
-  </div>
 
-  <div class="form-actions">
-    <div class="field">
-      <div class="control">
-        <%= f.button :submit, "Sign up", class: "button is-info" %>
-      </div>
-    </div>
-  </div>
-<% end %>
-
-<%= render "devise/shared/links" %>
+    <%- resource_class.omniauth_providers.each do |provider| %>
+      <%= link_to "Sign in with #{OmniAuth::Utils.camelize(provider)}", omniauth_authorize_path(resource_name, provider), method: :post, class: 'button is-link' %>
+    <% end %>
+  <% end %>
+  
+  <%= render "devise/shared/links" %>
+</section>
