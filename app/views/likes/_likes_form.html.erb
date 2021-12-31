@@ -1,0 +1,24 @@
+<% if current_user.liked_posts.include?(post) %>
+  <%= simple_form_for :unlike, url: like_path(current_user.likes.find_by_post_id(post.id)), method: :delete do |f| %>
+    <%= button_tag type: 'submit', class: "button is-white" do %>
+      <span class="icon-text">
+        <span class="icon">
+          <i class="fa fa-thumbs-up"></i>
+        </span>
+        <span><%= post.likes.count %></span>
+      </span>
+    <% end %>
+  <% end %>
+<% else %>
+  <%= simple_form_for :like, url: likes_path, method: :post do |f| %>
+    <%= f.hidden_field :post_id, value: post.id %>
+    <%= button_tag type: 'submit', class: "is-white button" do %>
+      <span class="icon-text">
+        <span class="icon">
+          <i class="fa fa-thumbs-o-up"></i>
+        </span>
+        <span><%= post.likes.count %></span>
+      </span>
+    <% end %>
+  <% end %>
+<% end %>
