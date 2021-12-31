@@ -10,6 +10,9 @@ Rails.application.routes.draw do
   end
   devise_for :users, controllers: { omniauth_callbacks: 'users/omniauth_callbacks' }
   resources :posts do
+    member do
+      delete :delete_photo_attachment
+    end
     resources :comments, except: %i[index show]
     get '/comments', to: redirect('/posts/%{post_id}')
   end

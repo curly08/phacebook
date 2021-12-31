@@ -4,7 +4,7 @@
 
   <div class="form-inputs field">
     <div class="control">
-      <%= f.input :body, input_html: { class: "textarea"}, wrapper: false, label_html: {class: "label"} %>
+      <%= f.input :body, input_html: { class: "textarea", cols: 65, rows: 15 }, wrapper: false, label_html: {class: "label"} %>
     </div>
   </div>
 
@@ -20,7 +20,15 @@
 
   <div class="form-actions field">
     <div class="control">
-      <%= f.button :submit, class: "button is-info" %>
+      <div class="buttons">
+        <%= f.button :submit, class: "button is-info is-outlined" %>
+        <% if @post.photo.attached? %>
+          <%= link_to 'Remove Photo', delete_photo_attachment_post_url(@post, photo_id: @post.photo.id),
+                      method: :delete,
+                      class: "button is-danger is-outlined",
+                      data: { confirm: 'Are you sure?' } %>
+        <% end %>
+      </div>
     </div>
   </div>
 <% end %>
