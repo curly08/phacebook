@@ -17,7 +17,7 @@ class User < ApplicationRecord
   has_many :likes, dependent: :destroy
   has_many :liked_posts, through: :likes, source: 'post'
   has_many :comments, dependent: :destroy
-  has_one_attached :photo
+  has_one_attached :photo, dependent: :destroy
 
   def active_friends
     friends.select { |friend| friend.friends.include?(self) }
@@ -41,7 +41,7 @@ class User < ApplicationRecord
 
   def self.new_with_session(params, session)
     super.tap do |user|
-      if data == session["devise.facebook_data"] && session["devise.facebook_data"]["extra"]["raw_info"]
+      if data = session["devise.facebook_data"] && session["devise.facebook_data"]["extra"]["raw_info"]
         user.email = data["email"] if user.email.blank?
       end
     end
