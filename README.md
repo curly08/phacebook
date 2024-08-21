@@ -2,8 +2,6 @@
 
 I built Phacebook! It is a Facebook clone, that includes much of the core Facebook user functionality such as users, profiles, “friending”, posts, uploading images via ActiveStorage, activity feed, and “liking”. I also implemented sign-in with the real Facebook by using OmniAuth and Devise. I used Amazon's S3 as my cloud storage solution and the production email settings are configured for Gmail. I used Bulma to create a responsive design for all devices (see screenshots below).
 
-Live Preview: https://evening-gorge-63419.herokuapp.com/
-
 You can sign in using `email: coolguy@email.com password: password` if you don't want to make an account. Besides, all data is deleted and populated with mock data every 24 hours via `rake db:seed` through Heroku's Scheduler.
 
 Project Details: https://www.theodinproject.com/paths/full-stack-ruby-on-rails/courses/ruby-on-rails/lessons/rails-final-project
